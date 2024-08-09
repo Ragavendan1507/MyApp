@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 // import Form from './Form';
 // import Sample1 from './Sample1';
 import { ThemeProvider, createTheme} from '@mui/material';
+import LoginParent from './components/LoginParent';
 // import Test from './test';
 // import ParentComponent from './landing Page/ParentComponent';
 
@@ -44,6 +45,7 @@ root.render(
     <ThemeProvider theme={theme}>
     {/* <Sample1/> */}
     {/* <ParentComponent/>  */}
+    <LoginParent/>
     </ThemeProvider>
   </React.StrictMode>
 );
