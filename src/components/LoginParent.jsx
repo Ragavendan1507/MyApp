@@ -13,21 +13,29 @@ import {
 import { grey } from "@mui/material/colors";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useState } from "react";
+import axios from "axios";
 // import {img} from "./images/loginImage.jpg"
 
 function LoginParent() {
-  const [getApiData, setApiData] = useState([]);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [loginClick, setLoginClick] = useState(true);
   const [forgotPasswordClick, setForgotPasswordClick] = useState(false);
-  const [conformUserClick,setConformUser] = useState(false);
+  const [newUserClick,setNewUserForm] = useState(false);
+  const [newPass,setNewPass] = useState("");
+  const [conformPass,setConformPass]= useState("");
 
   function handleChange(value, data) {
     if (value === "userName") {
       setUserName(data);
     } else if (value === "password") {
       setPassword(data);
+    }
+    else if(value === "NewPassword"){
+      setNewPass(data)
+    }
+    else if(value === "ConformPassword"){
+      setConformPass(data)
     }
   }
 
@@ -38,18 +46,66 @@ function LoginParent() {
     } else if (password === "") {
       alert("password field is Empty");
     }
+    else if(userName && password){
+        CheckUser(userName,password);
+    }
+  }
+  
+  function handlePassChange(e){
+    e.preventDefault();
+    if(newPass === ""){
+      alert("Password field is empty")
+    }
+    else if(conformPass === ""){
+      alert("New Pass Field Empty")
+    }
+    else if(newPass && conformPass){
+      if (newPass !== conformPass){
+        alert("Passwords doesnot match");
+      }
+      else if(newPass === conformPass){
+        alert("password updated Sucessful")
+
+      }
+    }
+  }
+
+  function UpdatePassword(){
+    try {
+      axios.put("/UpdatePasswordApi",{userName:userName,password:password})
+    } catch (error) {
+      
+    }
+  }
+
+  function CheckUser(name,pass){
+     try {
+        axios.post("http://localhost:9001/CheckLogin",{
+            userName : name,
+            password : pass
+        })
+        .then((response)=>{
+            if(response.data.message === "User Found"){
+                alert("login Sucess")
+
+            }
+            else if(response.data.message === "User Not Found"){
+                alert("user unavailable ")
+            }
+        })
+     } catch (error) {
+        console.error(error);
+     }
   }
 
   function handleClick(key){
     if(key === "SignIn"){
         setLoginClick(true);
         setForgotPasswordClick(false);
-        setConformUser(false);
     }
     if(key === "ForgotPassword"){
         setLoginClick(false);
         setForgotPasswordClick(true);
-        setConformUser(false);
     }
   }
 
@@ -147,7 +203,7 @@ function LoginParent() {
           {forgotPasswordClick && (
             <Box
               sx={{
-                my: 8,
+                my: 6,
                 mx: 4,
                 display: "flex",
                 flexDirection: "column",
@@ -163,9 +219,19 @@ function LoginParent() {
               <Box
                 component="form"
                 noValidate
-                //    onSubmit={handleSubmit}
+                onSubmit={handlePassChange}
                 sx={{ mt: 1 }}
               >
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  id="userName"
+                  label="User Name"
+                  name="userName"
+                  value={userName}
+                  onChange={(e) => handleChange("userName", e.target.value)}
+                  autoFocus
+                />
                 <TextField
                   margin="normal"
                   fullWidth
@@ -173,9 +239,8 @@ function LoginParent() {
                   label="New Password"
                   type="password"
                   id="New Password"
-                  onChange={(e) => handleChange("password", e.target.value)}
-                  value={password}
-                  autoComplete="current-password"
+                  onChange={(e) => handleChange("NewPassword", e.target.value)}
+                  value={newPass}
                 />
                 <TextField
                   margin="normal"
@@ -184,9 +249,8 @@ function LoginParent() {
                   label="Conform Password"
                   type="password"
                   id="Conform password"
-                  onChange={(e) => handleChange("password", e.target.value)}
-                  value={password}
-                  autoComplete="current-password"
+                  onChange={(e) => handleChange("ConformPassword", e.target.value)}
+                  value={conformPass}
                 />
                 <Button
                   type="submit"
@@ -199,7 +263,7 @@ function LoginParent() {
                 <Grid container sx={{mt:5}}>
                   <Grid item xs>
                     <Link onClick={()=>handleClick("SignIn")} variant="body2"  component={Button}>
-                      Existing User?
+                      Existing User? Sign In
                     </Link>
                   </Grid>
                   <Grid item>
