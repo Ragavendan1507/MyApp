@@ -45,7 +45,7 @@ root.render(
     <ThemeProvider theme={theme}>
     {/* <Sample1/> */}
     {/* <ParentComponent/>  */}
-    <LoginParent/>
+     <LoginParent/>
     </ThemeProvider>
   </React.StrictMode>
 );
